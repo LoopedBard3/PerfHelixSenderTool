@@ -2,31 +2,26 @@
 using Microsoft.DotNet.Helix.Client.Models;
 
 if (args.Length != 1) throw new ArgumentException("Must pass one argument for the token to use.");
-
-var repoToClone = "https://github.com/VivianaDuenas/runtimelab";
-var branchToClone = "inflate_improvements";
-var pathToBenchmarksFolder = "src/Microsoft.ManagedZLib/benchmarks";
 var username = "LoopedBard3";
 
 var api = ApiFactory.GetAuthenticated(args[0]);
 var queuesToTest = new List<string>()
 {
     "Windows.10.Amd64.19H1.Tiger.Perf",
-    //"Ubuntu.2204.Amd64.Tiger.Perf",
+    "Ubuntu.2204.Amd64.Tiger.Perf",
     //"Windows.10.Amd64.20H2.Owl.Perf",
     //"Ubuntu.1804.Amd64.Owl.Perf",
     //"Windows.10.Arm64.Perf.Surf",
     //"Ubuntu.2004.Arm64.Perf"
 };
 var jobs = new List<ISentJob>();
+string[] files = new string[] { "runTest.bat", "runTest.sh" };
 
 foreach (var queue in queuesToTest)
 {
-    string command = "echo hello";
-    if(queue.StartsWith("windows", StringComparison.InvariantCultureIgnoreCase))
-    {
-        command = $"";
-    }
+    var command = queue.Contains("windows", StringComparison.OrdinalIgnoreCase)
+                ? $"%HELIX_WORKITEM_PAYLOAD%\\runTest.bat"
+                : $"$HELIX_WORKITEM_PAYLOAD/runTest.sh";
 
     var job = await api.Job.Define()
       .WithType($"test/{username}/tool")
@@ -34,7 +29,7 @@ foreach (var queue in queuesToTest)
       .WithSource($"test/{username}/tool")
       .DefineWorkItem($"{queue} job")
       .WithCommand(command)
-      .WithEmptyPayload()
+      .WithFiles(files)
       .AttachToJob()
       .WithCreator($"{username}")
       .SendAsync();
@@ -59,7 +54,7 @@ while (!mainTask.IsCompleted)
     for (var i = 0; i < jobs.Count; i++)
     {
         var job = jobs[i];
-        Console.WriteLine($"{job.CorrelationId}: {taskList[i * 2].Status}");
+        Console.WriteLine($"{job.CorrelationId}: {taskList[i].Status}");
     }
     Console.WriteLine();
     await Task.Delay(loopInterval);
