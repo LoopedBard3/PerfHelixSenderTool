@@ -3,8 +3,10 @@ git clone https://github.com/VivianaDuenas/runtimelab --single-branch --branch i
 pushd runtimelab/src/Microsoft.ManagedZLib/benchmarks
 killall -9 dotnet 2> /dev/null
 curl -L -o ./dotnet-install.sh https://dot.net/v1/dotnet-install.sh
+chmod +x ./dotnet-install.sh
 ./dotnet-install.sh -Channel 8.0 -InstallDir .
-dotnet run -c Release --filter * --minIterationCount 1 --maxIterationCount 2
+chmod +x ./dotnet
+./dotnet run -c Release --filter "*" --minIterationCount 1 --maxIterationCount 2
 cp -r BenchmarkDotNet.Artifacts $HELIX_WORKITEM_UPLOAD_ROOT
 popd
 killall -9 dotnet 2> /dev/null
