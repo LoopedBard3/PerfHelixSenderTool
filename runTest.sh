@@ -6,7 +6,7 @@ curl -L -o ./dotnet-install.sh https://dot.net/v1/dotnet-install.sh
 chmod +x ./dotnet-install.sh
 ./dotnet-install.sh -Channel 8.0 -InstallDir .
 chmod +x ./dotnet
-./dotnet run -c Release --filter "*" --minIterationCount 1 --maxIterationCount 2
+./dotnet run -c Release --filter "*"
 cp -r BenchmarkDotNet.Artifacts $HELIX_WORKITEM_UPLOAD_ROOT
 popd
 killall -9 dotnet 2> /dev/null
