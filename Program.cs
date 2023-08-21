@@ -10,8 +10,11 @@ var queuesToTest = new List<string>()
     "Ubuntu.2204.Amd64.Tiger.Perf",
     "Windows.10.Amd64.20H2.Owl.Perf",
     "Ubuntu.1804.Amd64.Owl.Perf",
-    "Windows.10.Arm64.Perf.Surf",
-    "Ubuntu.2004.Arm64.Perf"
+    //"Windows.10.Arm64.Perf.Surf",
+    "Ubuntu.2004.Arm64.Perf",
+    "osx.13.arm64.m1.perf",
+    "osx.13.arm64.m2.perf",
+    "osx.13.amd64.perf"
 };
 var jobs = new List<(ISentJob, string)>();
 string[] files = new string[] { "runTest.bat", "runTest.sh" };
@@ -21,7 +24,7 @@ foreach (var queue in queuesToTest)
 {
     var command = queue.Contains("windows", StringComparison.OrdinalIgnoreCase)
                 ? $"%HELIX_WORKITEM_PAYLOAD%\\runTest.bat"
-                : $"chmod +x $HELIX_WORKITEM_PAYLOAD/runTest.sh; $HELIX_WORKITEM_PAYLOAD/runTest.sh";
+                : $"chmod +x ./runTest.sh; ./runTest.sh";
 
     var job = await api.Job.Define()
       .WithType($"test/{username}/tool")
