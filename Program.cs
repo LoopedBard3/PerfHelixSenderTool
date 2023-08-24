@@ -23,8 +23,8 @@ if (string.IsNullOrEmpty(helixKey)) throw new ArgumentException("Must set HelixK
 foreach (var queue in queuesToTest)
 {
     var command = queue.Contains("windows", StringComparison.OrdinalIgnoreCase)
-                ? $"%HELIX_WORKITEM_PAYLOAD%\\runTest.bat"
-                : $"chmod +x ./runTest.sh; ./runTest.sh";
+                ? $"%HELIX_WORKITEM_ROOT%\\runTest.bat"
+                : $"sed -i -e 's/\r$//' $HELIX_WORKITEM_ROOT/runTest.sh; chmod +x $HELIX_WORKITEM_ROOT/runTest.sh; $HELIX_WORKITEM_ROOT/runTest.sh";
 
     var job = await api.Job.Define()
       .WithType($"test/{username}/tool")
